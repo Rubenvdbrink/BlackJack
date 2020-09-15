@@ -16,23 +16,24 @@ public class Card {
         return rank;
     }
 
-    public void setRank(Rank rank) {
-        this.rank = rank;
-    }
-
-    public Suit getSuit() {
-        return suit;
-    }
-
-    public void setSuit(Suit suit) {
-        this.suit = suit;
-    }
-
+    //♣ ♦ ♥ ♠
     @Override
     public String toString() {
-        return "Card{" +
-                "rank=" + rank +
-                ", suit=" + suit +
-                '}';
+        char suitUnicode;
+        if (suit.equals(Suit.CLUBS)) {
+            suitUnicode = '♣';
+        }
+        else if (suit.equals(Suit.DIAMONDS)) {
+            suitUnicode = '♦';
+        }
+        else if (suit.equals(Suit.HEARTS)) {
+            suitUnicode = '♥';
+        }
+
+        else {
+            suitUnicode = '♠';
+        }
+
+        return " [" + rank + "/" + suitUnicode + "] ";
     }
 }

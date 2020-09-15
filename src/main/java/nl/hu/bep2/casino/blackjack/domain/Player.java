@@ -6,4 +6,8 @@ public class Player {
     public Player() {
         this.hand = new Hand();
     }
+
+    public Hand getHand() {
+        return hand;
+    }
 }
