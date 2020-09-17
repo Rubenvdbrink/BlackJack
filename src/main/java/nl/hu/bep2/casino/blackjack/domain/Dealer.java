@@ -7,10 +7,9 @@ public class Dealer {
     private Hand hand;
     private Player player;
 
-    public Dealer(Player player) {
+    public Dealer() {
         this.deck = new Deck();
         this.hand = new Hand();
-        this.player = player;
     }
 
     public void shuffleDeck() {
@@ -43,5 +42,9 @@ public class Dealer {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

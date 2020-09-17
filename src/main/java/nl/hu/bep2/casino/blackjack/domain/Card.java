@@ -34,6 +34,6 @@ public class Card {
             suitUnicode = '♠';
         }
 
-        return " [" + rank + "/" + suitUnicode + "] ";
+        return " [" + rank + "/" + suitUnicode + "](" + rank.rank() + ") ";
     }
 }
