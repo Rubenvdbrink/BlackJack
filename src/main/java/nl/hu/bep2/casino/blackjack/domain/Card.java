@@ -29,7 +29,6 @@ public class Card {
         else if (suit.equals(Suit.HEARTS)) {
             suitUnicode = '♥';
         }
-
         else {
             suitUnicode = '♠';
         }

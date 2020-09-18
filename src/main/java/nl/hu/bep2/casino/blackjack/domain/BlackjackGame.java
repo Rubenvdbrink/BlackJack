@@ -1,5 +1,6 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
+
 import java.util.Scanner;
 
 public class BlackjackGame {
@@ -23,6 +24,7 @@ public class BlackjackGame {
         this.dealer.shuffleDeck();
 
         startingRound();
+        updateCardsScores();
 
         if(checkBlackJack()) {
             return;
@@ -33,25 +35,40 @@ public class BlackjackGame {
                 int choice = hitStandOrSurrender();
                 if (choice == 1) {
                     System.out.println("\n♣ ♦ ♥ ♠ HIT ♠ ♥ ♦ ♣");
-                    playerHit();
+
+                    this.dealer.drawCardForPlayer();
+                    System.out.println("Your cards: " + this.player.getHand().getCards());
+
+                    updateCardsScores();
                 } else if (choice == 2) {
                     System.out.println("\n♣ ♦ ♥ ♠ STAND ♠ ♥ ♦ ♣");
                     revealHiddenCard();
-                    dealerDrawCards();
+
+                    dealer.playerStands();
+                    System.out.println("Dealer has drawn card(s)");
+                    System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
+
+                    updateCardsScores();
                     winOrLose();
                     break;
                 } else if (choice == 3) {
                     System.out.println("\n♣ ♦ ♥ ♠ SURRENDER ♠ ♥ ♦ ♣");
                     revealHiddenCard();
-                    surrender();
+                    System.out.println("\n♣ ♦ ♥ ♠ You have SURRENDERED, half of your " + chipsBet + " chips will be returned (" + chipsBet/2 + ") ♠ ♥ ♦ ♣");
+                    this.player.surrender();
                     break;
-                } else if (choice == 4) {
+                } else {
                     System.out.println("\n♣ ♦ ♥ ♠ DOUBLE ♠ ♥ ♦ ♣");
                     System.out.println("Your bet of " + chipsBet + " chips has been doubled! (" + chipsBet * 2 + ")" );
                     chipsBet *= 2;
-                    playerHit();
+                    this.dealer.drawCardForPlayer();
                     revealHiddenCard();
-                    dealerDrawCards();
+
+                    dealer.playerStands();
+                    System.out.println("Dealer has drawn card(s)");
+                    System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
+
+                    updateCardsScores();
                     winOrLose();
                     break;
                 }
@@ -74,10 +91,6 @@ public class BlackjackGame {
         return false;
     }
 
-    private void surrender() {
-        System.out.println("\n♣ ♦ ♥ ♠ You have SURRENDERED, half of your " + chipsBet + " chips will be returned (" + chipsBet/2 + ") ♠ ♥ ♦ ♣");
-    }
-
     private void winOrLose() {
         if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) { //BUST
             Utils.printLose();
@@ -86,21 +99,6 @@ public class BlackjackGame {
         else {
             Utils.printWin();
             System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + chipsBet * 2 + " chips ♠ ♥ ♦ ♣");
-        }
-    }
-
-    private void playerHit() {
-        this.dealer.drawCardForPlayer();
-        updateCardsScores();
-        System.out.println("Your cards: " + this.player.getHand().getCards());
-    }
-
-    private void dealerDrawCards() {
-        while(dealerScore < 17) {
-            this.dealer.drawCardForDealer();
-            System.out.println("Dealer has drawn a card");
-            updateCardsScores();
-            System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
         }
     }
 
@@ -115,14 +113,15 @@ public class BlackjackGame {
         return Integer.parseInt(choiceInput.nextLine());
     }
 
-    //TODO wordt voor nu nog niks mee gedaan
+    //TODO
+    //wordt voor nu nog niks mee gedaan
     private void askForBetAmount () {
         Scanner chipsInput = new Scanner(System.in);
         System.out.print("\nHow many chips do you want to bet? : ");
         try {
             chipsBet = Integer.parseInt(chipsInput.nextLine());
         } catch (NumberFormatException NFE) {
-            chipsBet = 0;
+            askForBetAmount();
         }
         System.out.println("\nYour bet: " + chipsBet + " Chips");
     }
@@ -132,21 +131,10 @@ public class BlackjackGame {
         this.dealer.startGameHandOutCards();
         System.out.println("\nYour cards: " + this.player.getHand().getCards());
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards().get(0) + " and one non visible card");
-
-        updateCardsScores();
     }
 
     private void updateCardsScores () {
-        int score = 0;
-        for (Card card : this.player.getHand().getCards()) {
-            score += card.getRank().rank();
-        }
-        playerScore = score;
-        score = 0;
-
-        for (Card card : this.dealer.getHand().getCards()) {
-            score += card.getRank().rank();
-        }
-        dealerScore = score;
+        playerScore = player.totalScoreOfCards();
+        dealerScore = dealer.totalScoreOfCards();
     }
 }

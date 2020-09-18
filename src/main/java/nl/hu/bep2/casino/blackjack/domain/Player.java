@@ -8,6 +8,18 @@ public class Player {
         this.hand = new Hand();
     }
 
+    public void surrender() {}
+
+    public int totalScoreOfCards() {
+        int score = 0;
+        if(!this.hand.getCards().isEmpty()) {
+            for (Card card : this.hand.getCards()) {
+                score += card.getRank().rank();
+            }
+        }
+        return score;
+    }
+
     public Hand getHand() {
         return hand;
     }

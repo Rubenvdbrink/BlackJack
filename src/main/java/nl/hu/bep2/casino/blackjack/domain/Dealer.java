@@ -24,12 +24,26 @@ public class Dealer {
         drawCardForDealer();
     }
 
+    public void playerStands() {
+        while(totalScoreOfCards() < 17) {
+            drawCardForDealer();
+        }
+    }
+
     public void drawCardForDealer() {
         this.hand.getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck());
     }
 
-    public void drawCardForPlayer() {
-        this.player.getHand().getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck());
+    public void drawCardForPlayer() { this.player.getHand().getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck()); }
+
+    public int totalScoreOfCards() {
+        int score = 0;
+        if(!this.hand.getCards().isEmpty()) {
+            for (Card card : this.hand.getCards()) {
+                score += card.getRank().rank();
+            }
+        }
+        return score;
     }
 
     public Deck getDeck() {
