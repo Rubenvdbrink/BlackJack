@@ -25,6 +25,7 @@ public class ChipsService {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        System.out.println(username + " requested balance");
         return this.chipsRepository.findByUser(user);
     }
 
@@ -34,12 +35,13 @@ public class ChipsService {
 
         // This will just deposit any amount of chips,
         // in a real world scenario, you would send the
-        // use through a payment gateway before adding the amount
+        // user through a payment gateway before adding the amount
         // after confirmation
         Chips chips = this.chipsRepository.findByUser(user)
             .orElse(new Chips(user, 0L));
         chips.deposit(amount);
 
+        System.out.println(amount + " chips have been deposited for " + username);
         this.chipsRepository.save(chips);
     }
 }

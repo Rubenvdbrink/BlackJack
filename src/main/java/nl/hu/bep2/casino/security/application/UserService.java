@@ -42,10 +42,12 @@ public class UserService implements UserDetailsService {
 
         this.userRepository.save(user);
         this.chipsRepository.save(chips);
+        System.out.println("New user: " + username + " has been created");
     }
 
     @Override
     public User loadUserByUsername(String username) {
+        System.out.println(username + " is logged in");
         return this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }

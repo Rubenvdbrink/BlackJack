@@ -48,6 +48,11 @@ public class Chips {
         this.amount += amount;
     }
 
+    //Removes chips from user when lose or chipsBet
+    public void remove(Long amount) {
+        this.amount -= amount;
+    }
+
     public User getUser() {
         return user;
     }

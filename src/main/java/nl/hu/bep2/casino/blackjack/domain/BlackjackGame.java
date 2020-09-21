@@ -49,7 +49,7 @@ public class BlackjackGame {
                     System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
 
                     updateCardsScores();
-                    winOrLose();
+                    checkWinOrLose();
                     break;
                 } else if (choice == 3) {
                     System.out.println("\n♣ ♦ ♥ ♠ SURRENDER ♠ ♥ ♦ ♣");
@@ -69,12 +69,12 @@ public class BlackjackGame {
                     System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
 
                     updateCardsScores();
-                    winOrLose();
+                    checkWinOrLose();
                     break;
                 }
             } else {
                 revealHiddenCard();
-                winOrLose();
+                checkWinOrLose();
                 break;
             }
             }
@@ -91,7 +91,7 @@ public class BlackjackGame {
         return false;
     }
 
-    private void winOrLose() {
+    private void checkWinOrLose() {
         if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) { //BUST
             Utils.printLose();
             System.out.println("\n♣ ♦ ♥ ♠ You have LOST, say goodbye to your " + chipsBet + " chips ♠ ♥ ♦ ♣");
@@ -103,7 +103,7 @@ public class BlackjackGame {
     }
 
     private void revealHiddenCard() {
-        System.out.println("Dealer reveals hidden card");
+        System.out.println("\nDealer reveals hidden card");
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
     }
 
