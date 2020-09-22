@@ -1,8 +1,12 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Player {
     private Hand hand;
     private Dealer dealer;
+    private String username;
 
     public Player() {
         this.hand = new Hand();
@@ -18,6 +22,14 @@ public class Player {
             }
         }
         return score;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Hand getHand() {

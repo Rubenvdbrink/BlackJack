@@ -16,15 +16,30 @@ public class BlackJackController {
 
     public BlackJackController(BlackJackService blackJackService) { this.blackJackService = blackJackService; }
 
+    @PostMapping("/startgame")
+    public void startGame(Authentication authentication) {
+        UserProfile profile = (UserProfile) authentication.getPrincipal();
+        this.blackJackService.startGame(profile.getUsername());
+    }
+
     @PostMapping("/hit")
     public void playerHit() {
         this.blackJackService.playerHit();
-
     }
 
     @PostMapping("/stand")
     public void playerStand() {
+        this.blackJackService.playerStand();
+    }
 
+    @PostMapping("/surrender")
+    public void playerSurrender() {
+        this.blackJackService.playerSurrender();
+    }
+
+    @PostMapping("/double")
+    public void playerDouble() {
+        this.blackJackService.playerDouble();
     }
 
     @PostMapping("/placebet")

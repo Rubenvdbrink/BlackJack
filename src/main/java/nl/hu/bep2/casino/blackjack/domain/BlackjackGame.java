@@ -1,21 +1,25 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
 
+import org.springframework.stereotype.Component;
+
 import java.util.Scanner;
 
-public class BlackjackGame {
+@Component
+public class BlackjackGame extends Game {
     private Player player;
     private Dealer dealer;
     private int playerScore = 0;
     private int dealerScore = 0;
     private int chipsBet = 0;
+    private Bet bet;
 
-    public BlackjackGame (Player player, Dealer dealer) {
+    public BlackjackGame(Player player, Dealer dealer) {
         this.player = player;
         this.dealer = dealer;
     }
 
-    public void play() {
+    public void initializeGame() {
         Utils.printWelcome();
 
         askForBetAmount();
@@ -26,7 +30,7 @@ public class BlackjackGame {
         startingRound();
         updateCardsScores();
 
-        if(checkBlackJack()) {
+        if (checkBlackJack()) {
             return;
         }
 
@@ -34,14 +38,14 @@ public class BlackjackGame {
             if (playerScore < 22) {
                 int choice = hitStandOrSurrender();
                 if (choice == 1) {
-                    System.out.println("\n♣ ♦ ♥ ♠ HIT ♠ ♥ ♦ ♣");
+                    Utils.printHit();
 
                     this.dealer.drawCardForPlayer();
                     System.out.println("Your cards: " + this.player.getHand().getCards());
 
                     updateCardsScores();
                 } else if (choice == 2) {
-                    System.out.println("\n♣ ♦ ♥ ♠ STAND ♠ ♥ ♦ ♣");
+                    Utils.printStand();
                     revealHiddenCard();
 
                     dealer.playerStands();
@@ -52,14 +56,14 @@ public class BlackjackGame {
                     checkWinOrLose();
                     break;
                 } else if (choice == 3) {
-                    System.out.println("\n♣ ♦ ♥ ♠ SURRENDER ♠ ♥ ♦ ♣");
+                    Utils.printSurrender();
                     revealHiddenCard();
-                    System.out.println("\n♣ ♦ ♥ ♠ You have SURRENDERED, half of your " + chipsBet + " chips will be returned (" + chipsBet/2 + ") ♠ ♥ ♦ ♣");
+                    System.out.println("\n♣ ♦ ♥ ♠ You have SURRENDERED, half of your " + chipsBet + " chips will be returned (" + chipsBet / 2 + ") ♠ ♥ ♦ ♣");
                     this.player.surrender();
                     break;
                 } else {
-                    System.out.println("\n♣ ♦ ♥ ♠ DOUBLE ♠ ♥ ♦ ♣");
-                    System.out.println("Your bet of " + chipsBet + " chips has been doubled! (" + chipsBet * 2 + ")" );
+                    Utils.printDouble();
+                    System.out.println("Your bet of " + chipsBet + " chips has been doubled! (" + chipsBet * 2 + ")");
                     chipsBet *= 2;
                     this.dealer.drawCardForPlayer();
                     revealHiddenCard();
@@ -77,26 +81,25 @@ public class BlackjackGame {
                 checkWinOrLose();
                 break;
             }
-            }
+        }
         System.out.println("♣ ♦ ♥ ♠ Dealer score: " + dealerScore + " Player score: " + playerScore + " ♠ ♥ ♦ ♣");
     }
 
-    private boolean checkBlackJack() {
+    public boolean checkBlackJack() {
         if (playerScore == 21 && dealerScore != 21) {
             System.out.println("♣ ♦ ♥ ♠ BlackJack! ♠ ♥ ♦ ♣");
             Utils.printWin();
-            System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + chipsBet * 5 + " chips ♠ ♥ ♦ ♣");
+            System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + bet.getAmount() * 5 + " chips ♠ ♥ ♦ ♣");
             return true;
         }
         return false;
     }
 
-    private void checkWinOrLose() {
+    public void checkWinOrLose() {
         if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) { //BUST
             Utils.printLose();
             System.out.println("\n♣ ♦ ♥ ♠ You have LOST, say goodbye to your " + chipsBet + " chips ♠ ♥ ♦ ♣");
-        }
-        else {
+        } else {
             Utils.printWin();
             System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + chipsBet * 2 + " chips ♠ ♥ ♦ ♣");
         }
@@ -115,7 +118,7 @@ public class BlackjackGame {
 
     //TODO
     //wordt voor nu nog niks mee gedaan
-    private void askForBetAmount () {
+    private void askForBetAmount() {
         Scanner chipsInput = new Scanner(System.in);
         System.out.print("\nHow many chips do you want to bet? : ");
         try {
@@ -126,15 +129,39 @@ public class BlackjackGame {
         System.out.println("\nYour bet: " + chipsBet + " Chips");
     }
 
-    private void startingRound() {
+    public void startingRound() {
         System.out.println("\n♣ ♦ ♥ ♠ Handing out cards ♠ ♥ ♦ ♣");
         this.dealer.startGameHandOutCards();
         System.out.println("\nYour cards: " + this.player.getHand().getCards());
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards().get(0) + " and one non visible card");
     }
 
-    private void updateCardsScores () {
+    public void updateCardsScores() {
         playerScore = player.totalScoreOfCards();
         dealerScore = dealer.totalScoreOfCards();
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public Dealer getDealer() {
+        return dealer;
+    }
+
+    public void setDealer(Dealer dealer) {
+        this.dealer = dealer;
+    }
+
+    public Bet getBet() {
+        return bet;
+    }
+
+    public void setBet(Bet bet) {
+        this.bet = bet;
     }
 }

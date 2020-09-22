@@ -30,4 +30,20 @@ public class Utils {
                 "    | | (_) | |_| | | | | | (_| |\\ V /  __/ | | (_) \\__ \\ |_ \n" +
                 "    |_|\\___/ \\__,_| |_| |_|\\__,_| \\_/ \\___| |_|\\___/|___/\\__|\n");
     }
+
+    public static void printHit() {
+        System.out.println("\n♣ ♦ ♥ ♠ HIT ♠ ♥ ♦ ♣");
+    }
+
+    public static void printStand() {
+        System.out.println("\n♣ ♦ ♥ ♠ STAND ♠ ♥ ♦ ♣");
+    }
+
+    public static void printSurrender() {
+        System.out.println("\n♣ ♦ ♥ ♠ SURRENDER ♠ ♥ ♦ ♣");
+    }
+
+    public static void printDouble() {
+        System.out.println("\n♣ ♦ ♥ ♠ DOUBLE ♠ ♥ ♦ ♣");
+    }
 }

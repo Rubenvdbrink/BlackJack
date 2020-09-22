@@ -1,15 +1,19 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Collections;
 
+@Component
 public class Dealer {
     private Deck deck;
     private Hand hand;
     private Player player;
 
-    public Dealer() {
+    public Dealer(Player player) {
         this.deck = new Deck();
         this.hand = new Hand();
+        this.player = player;
     }
 
     public void shuffleDeck() {
