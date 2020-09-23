@@ -16,23 +16,14 @@ public class Card {
         return rank;
     }
 
-    //♣ ♦ ♥ ♠
     @Override
     public String toString() {
-        char suitUnicode;
-        if (suit.equals(Suit.CLUBS)) {
-            suitUnicode = '♣';
-        }
-        else if (suit.equals(Suit.DIAMONDS)) {
-            suitUnicode = '♦';
-        }
-        else if (suit.equals(Suit.HEARTS)) {
-            suitUnicode = '♥';
-        }
-        else {
-            suitUnicode = '♠';
-        }
-
-        return " [" + rank + "/" + suitUnicode + "](" + rank.rank() + ") ";
+        return " ["
+                + rank
+                + "/"
+                + suit.suit()
+                + "]("
+                + rank.rank()
+                + ") ";
     }
 }

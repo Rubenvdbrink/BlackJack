@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CasinoApplication {
 
     public static void main(String[] args) {
-
+        //♣ ♦ ♥ ♠
         SpringApplication.run(CasinoApplication.class, args);
         Utils.printWelcome();
     }

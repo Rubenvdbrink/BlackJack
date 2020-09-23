@@ -17,7 +17,7 @@ public class BlackJackController {
     public BlackJackController(BlackJackService blackJackService) { this.blackJackService = blackJackService; }
 
     @PostMapping("/startgame")
-    public void startGame(Authentication authentication) {
+    public void startGame(Authentication authentication) throws InterruptedException {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         this.blackJackService.startGame(profile.getUsername());
     }

@@ -10,5 +10,6 @@ public class Blackjack {
 //
 //        BlackjackGame blackjackGame = new BlackjackGame(player, dealer);
 //        blackjackGame.playOneGame();
+        //TODO REMOVE CLASS, NOT NEEDED ANYMORE
     }
 }

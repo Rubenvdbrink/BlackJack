@@ -1,8 +1,13 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
 
+import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
+import nl.hu.bep2.casino.blackjack.domain.enums.Rank;
+import nl.hu.bep2.casino.blackjack.domain.enums.Suit;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -11,8 +16,9 @@ public class BlackjackGame extends Game {
     private Dealer dealer;
     private int playerScore = 0;
     private int dealerScore = 0;
-    private int chipsBet = 0;
+    private int chipsBet = 0; //TODO wordt voor nu niks meer mee gedaan
     private Bet bet;
+    private GameState gameState;
 
     public BlackjackGame(Player player, Dealer dealer) {
         this.player = player;
@@ -105,11 +111,13 @@ public class BlackjackGame extends Game {
         }
     }
 
-    private void revealHiddenCard() {
+    public void revealHiddenCard() {
         System.out.println("\nDealer reveals hidden card");
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
     }
 
+    //TODO
+    //wordt voor nu niks meer mee gedaan
     private int hitStandOrSurrender() {
         Scanner choiceInput = new Scanner(System.in);
         System.out.print("\nHIT(1) or STAND(2) or SURRENDER(3) or DOUBLE(4) : ");
@@ -117,7 +125,7 @@ public class BlackjackGame extends Game {
     }
 
     //TODO
-    //wordt voor nu nog niks mee gedaan
+    //wordt voor nu niks meer mee gedaan
     private void askForBetAmount() {
         Scanner chipsInput = new Scanner(System.in);
         System.out.print("\nHow many chips do you want to bet? : ");
@@ -134,11 +142,25 @@ public class BlackjackGame extends Game {
         this.dealer.startGameHandOutCards();
         System.out.println("\nYour cards: " + this.player.getHand().getCards());
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards().get(0) + " and one non visible card");
+        updateCardsScores();
     }
 
     public void updateCardsScores() {
         playerScore = player.totalScoreOfCards();
         dealerScore = dealer.totalScoreOfCards();
+    }
+
+    //TODO
+    //remove before version 1.0, this is just for testing purposes
+    public void fakeBlackJackForPlayer() {
+        List<Card> list = new ArrayList<>();
+        list.add(new Card(Rank.ACE, Suit.DIAMONDS));
+        list.add(new Card(Rank.TEN, Suit.DIAMONDS));
+        this.player.getHand().setCards(list);
+
+        updateCardsScores();
+
+        System.out.println("fake blackjack for player! " + this.player.getHand().getCards());
     }
 
     public Player getPlayer() {
@@ -163,5 +185,21 @@ public class BlackjackGame extends Game {
 
     public void setBet(Bet bet) {
         this.bet = bet;
+    }
+
+    public int getPlayerScore() {
+        return playerScore;
+    }
+
+    public int getDealerScore() {
+        return dealerScore;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 }
