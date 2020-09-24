@@ -17,35 +17,32 @@ public class BlackJackController {
     public BlackJackController(BlackJackService blackJackService) { this.blackJackService = blackJackService; }
 
     @PostMapping("/startgame")
-    public void startGame(Authentication authentication) throws InterruptedException {
+    public void startGame(Authentication authentication, @RequestBody Bet bet) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.startGame(profile.getUsername());
+        this.blackJackService.startGame(profile.getUsername(), bet.betAmount);
     }
 
     @PostMapping("/hit")
-    public void playerHit() {
-        this.blackJackService.playerHit();
+    public void playerHit(Authentication authentication) {
+        UserProfile profile = (UserProfile) authentication.getPrincipal();
+        this.blackJackService.playerHit(profile.getUsername());
     }
 
     @PostMapping("/stand")
-    public void playerStand() {
-        this.blackJackService.playerStand();
+    public void playerStand(Authentication authentication) {
+        UserProfile profile = (UserProfile) authentication.getPrincipal();
+        this.blackJackService.playerStand(profile.getUsername());
     }
 
     @PostMapping("/surrender")
-    public void playerSurrender() {
-        this.blackJackService.playerSurrender();
+    public void playerSurrender(Authentication authentication) {
+        UserProfile profile = (UserProfile) authentication.getPrincipal();
+        this.blackJackService.playerSurrender(profile.getUsername());
     }
 
     @PostMapping("/double")
-    public void playerDouble() {
-        this.blackJackService.playerDouble();
-    }
-
-    @PostMapping("/placebet")
-    public void playerPlaceBet(Authentication authentication, @RequestBody Bet bet) {
+    public void playerDouble(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-
-        this.blackJackService.placeBet(profile.getUsername(), bet.betAmount);
+        this.blackJackService.playerDouble(profile.getUsername());
     }
 }

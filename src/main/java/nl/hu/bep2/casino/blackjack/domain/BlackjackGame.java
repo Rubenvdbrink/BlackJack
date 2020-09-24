@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @Component
 public class BlackjackGame extends Game {
@@ -16,7 +15,6 @@ public class BlackjackGame extends Game {
     private Dealer dealer;
     private int playerScore = 0;
     private int dealerScore = 0;
-    private int chipsBet = 0; //TODO wordt voor nu niks meer mee gedaan
     private Bet bet;
     private GameState gameState;
 
@@ -25,116 +23,98 @@ public class BlackjackGame extends Game {
         this.dealer = dealer;
     }
 
-    public void initializeGame() {
-        Utils.printWelcome();
-
-        askForBetAmount();
+    @Override
+    public void initializeGame(String username) {
+        player.setUsername(username);
+        System.out.println("Welcome, " + player.getUsername() + " to blackjack!");
+        System.out.println("♣ ♦ ♥ ♠ " + username + " has placed a bet of " + bet.getAmount() + " chips ♠ ♥ ♦ ♣");
 
         System.out.println("♣ ♦ ♥ ♠ Deck is getting shuffled ♠ ♥ ♦ ♣");
-        this.dealer.shuffleDeck();
-
+        dealer.shuffleDeck();
+        gameState = GameState.STARTOFGAME;
         startingRound();
-        updateCardsScores();
 
+        fakeBlackJackForPlayer();
         if (checkBlackJack()) {
             return;
         }
-
-        while (true) {
-            if (playerScore < 22) {
-                int choice = hitStandOrSurrender();
-                if (choice == 1) {
-                    Utils.printHit();
-
-                    this.dealer.drawCardForPlayer();
-                    System.out.println("Your cards: " + this.player.getHand().getCards());
-
-                    updateCardsScores();
-                } else if (choice == 2) {
-                    Utils.printStand();
-                    revealHiddenCard();
-
-                    dealer.playerStands();
-                    System.out.println("Dealer has drawn card(s)");
-                    System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
-
-                    updateCardsScores();
-                    checkWinOrLose();
-                    break;
-                } else if (choice == 3) {
-                    Utils.printSurrender();
-                    revealHiddenCard();
-                    System.out.println("\n♣ ♦ ♥ ♠ You have SURRENDERED, half of your " + chipsBet + " chips will be returned (" + chipsBet / 2 + ") ♠ ♥ ♦ ♣");
-                    this.player.surrender();
-                    break;
-                } else {
-                    Utils.printDouble();
-                    System.out.println("Your bet of " + chipsBet + " chips has been doubled! (" + chipsBet * 2 + ")");
-                    chipsBet *= 2;
-                    this.dealer.drawCardForPlayer();
-                    revealHiddenCard();
-
-                    dealer.playerStands();
-                    System.out.println("Dealer has drawn card(s)");
-                    System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
-
-                    updateCardsScores();
-                    checkWinOrLose();
-                    break;
-                }
-            } else {
-                revealHiddenCard();
-                checkWinOrLose();
-                break;
-            }
-        }
-        System.out.println("♣ ♦ ♥ ♠ Dealer score: " + dealerScore + " Player score: " + playerScore + " ♠ ♥ ♦ ♣");
+//
+////        gameLoop();
+//
+//        if (checkDouble()) {
+//            return;
+//        }
+//        checkWinOrLose();
     }
+
+//    public void gameLoop() throws InterruptedException {
+//        System.out.println("What is your next move? HIT, STAND, DOUBLE OR SURRENDER");
+//          while (true) {
+//            if (gameState == GameState.WAITFORPLAYERACTION) {
+//                Thread.sleep(1000);
+//            }
+//            else if (gameState == GameState.PLAYERHIT) {
+//                if (playerScore < 22) {
+//                    System.out.println("What is your next move? HIT, STAND, DOUBLE OR SURRENDER");
+//                    gameState = GameState.WAITFORPLAYERACTION;
+//                } else {
+//                    System.out.println("BUST");
+//                    revealHiddenCard();
+//                    break;
+//                }
+//            }
+//            else if (gameState == GameState.PLAYERSTAND) {
+//                break;
+//            }
+//            else if (gameState == GameState.PLAYERSURRENDER) {
+//                break;
+//            }
+//            else if (gameState == GameState.PLAYERDOUBLE) {
+//                break;
+//            }
+//        }
+//    }
 
     public boolean checkBlackJack() {
         if (playerScore == 21 && dealerScore != 21) {
-            System.out.println("♣ ♦ ♥ ♠ BlackJack! ♠ ♥ ♦ ♣");
-            Utils.printWin();
-            System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + bet.getAmount() * 5 + " chips ♠ ♥ ♦ ♣");
+//            revealHiddenCard();
+//            getDealer().playerStands();
+            gameState = GameState.PLAYERBLACKJACK;
             return true;
         }
         return false;
     }
 
+//    private boolean checkDouble() {
+//        if (gameState == GameState.PLAYERDOUBLE) {
+//            System.out.println("♣ ♦ ♥ ♠ DOUBLE ♠ ♥ ♦ ♣");
+//            if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) {
+//                return false;
+//            } else {
+//                Utils.printWin();
+//                System.out.println("\n♣ ♦ ♥ ♠ You have WON by DOUBLING, you've acquired' " + bet.getAmount() * 2 + " chips ♠ ♥ ♦ ♣");
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
+
     public void checkWinOrLose() {
-        if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) { //BUST
+        if ((dealerScore >= playerScore && dealerScore < 22) || playerScore > 21) {
             Utils.printLose();
-            System.out.println("\n♣ ♦ ♥ ♠ You have LOST, say goodbye to your " + chipsBet + " chips ♠ ♥ ♦ ♣");
+            System.out.println("\n♣ ♦ ♥ ♠ You have LOST, say goodbye to your " + bet.getAmount() + " chips ♠ ♥ ♦ ♣");
+            gameState = GameState.PLAYERLOSE;
         } else {
             Utils.printWin();
-            System.out.println("\n♣ ♦ ♥ ♠ You have WON, you have won " + chipsBet * 2 + " chips ♠ ♥ ♦ ♣");
+            System.out.println("\n♣ ♦ ♥ ♠ You have WON, you've acquired' " + bet.getAmount() * 2 + " chips ♠ ♥ ♦ ♣");
+            gameState = GameState.PLAYERWIN;
         }
+        System.out.println("♣ ♦ ♥ ♠ Dealer score: " + dealerScore + " Player score: " + playerScore + " ♠ ♥ ♦ ♣");
     }
 
     public void revealHiddenCard() {
         System.out.println("\nDealer reveals hidden card");
         System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
-    }
-
-    //TODO
-    //wordt voor nu niks meer mee gedaan
-    private int hitStandOrSurrender() {
-        Scanner choiceInput = new Scanner(System.in);
-        System.out.print("\nHIT(1) or STAND(2) or SURRENDER(3) or DOUBLE(4) : ");
-        return Integer.parseInt(choiceInput.nextLine());
-    }
-
-    //TODO
-    //wordt voor nu niks meer mee gedaan
-    private void askForBetAmount() {
-        Scanner chipsInput = new Scanner(System.in);
-        System.out.print("\nHow many chips do you want to bet? : ");
-        try {
-            chipsBet = Integer.parseInt(chipsInput.nextLine());
-        } catch (NumberFormatException NFE) {
-            askForBetAmount();
-        }
-        System.out.println("\nYour bet: " + chipsBet + " Chips");
     }
 
     public void startingRound() {

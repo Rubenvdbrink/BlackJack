@@ -1,8 +1,10 @@
 package nl.hu.bep2.casino.blackjack.application;
 
+import nl.hu.bep2.casino.blackjack.data.BlackJackRepository;
 import nl.hu.bep2.casino.blackjack.domain.Bet;
 import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
+import nl.hu.bep2.casino.chips.application.ChipsService;
 import nl.hu.bep2.casino.chips.data.Chips;
 import nl.hu.bep2.casino.chips.data.SpringChipsRepository;
 import nl.hu.bep2.casino.security.data.SpringUserRepository;
@@ -17,113 +19,60 @@ import javax.transaction.Transactional;
 public class BlackJackService {
     private final SpringUserRepository userRepository;
     private final SpringChipsRepository chipsRepository;
+    private final BlackJackRepository blackJackRepository;
     private final BlackjackGame blackjackGame;
+    private final ChipsService chipsService;
 
     private User user;
     private Chips chips;
 
-    public BlackJackService(SpringUserRepository userRepository, SpringChipsRepository chipsRepository, BlackjackGame blackjackGame) {
+    public BlackJackService(SpringUserRepository userRepository, SpringChipsRepository chipsRepository, BlackJackRepository blackJackRepository, BlackjackGame blackjackGame, ChipsService chipsService) {
         this.userRepository = userRepository;
         this.chipsRepository = chipsRepository;
+        this.blackJackRepository = blackJackRepository;
         this.blackjackGame = blackjackGame;
+        this.chipsService = chipsService;
     }
 
-    public void startGame(String username) throws InterruptedException {
+    public void startGame(String username, Long bet) {
+        chipsService.withdrawChips(username, bet);
+        blackjackGame.setBet(new Bet(bet));
+        System.out.println(username + " placed a bet of " + bet + " chips");
 
         user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         chips = this.chipsRepository.findByUser(user)
                 .orElse(new Chips(user, 0L));
 
-        this.blackjackGame.getPlayer().setUsername(username);
-        System.out.println("Welcome, " + this.blackjackGame.getPlayer().getUsername() + " to blackjack!");
+        this.blackjackGame.initializeGame(username);
 
-        System.out.println("♣ ♦ ♥ ♠ Please place your bets now! ♠ ♥ ♦ ♣");
-        while (blackjackGame.getBet() == null){
-            Thread.sleep(1000);
+        if (this.blackjackGame.getGameState() == GameState.PLAYERBLACKJACK) {
+            playerStand(username);
         }
-
-        System.out.println("♣ ♦ ♥ ♠ " + username + " has placed a bet of " + blackjackGame.getBet().getAmount() + " chips ♠ ♥ ♦ ♣");
-        System.out.println("♣ ♦ ♥ ♠ Deck is getting shuffled ♠ ♥ ♦ ♣");
-        this.blackjackGame.getDealer().shuffleDeck();
-        this.blackjackGame.setGameState(GameState.STARTOFGAME);
-        this.blackjackGame.startingRound();
-
-        //simulate blackjack for player
-//        this.blackjackGame.fakeBlackJackForPlayer();
-        
-        if (this.blackjackGame.checkBlackJack()) {
-            this.blackjackGame.revealHiddenCard();
-            chips.deposit(blackjackGame.getBet().getAmount() * 5);
-            this.chipsRepository.save(chips);
-            return;
-        }
-
-        System.out.println("What is your next move? HIT, STAND, DOUBLE OR SURRENDER");
-        while (true) {
-            if (this.blackjackGame.getGameState() == GameState.WAITFORPLAYERACTION) {
-                Thread.sleep(1000);
-            }
-            else if (this.blackjackGame.getGameState() == GameState.PLAYERHIT) {
-                if (this.blackjackGame.getPlayerScore() < 22) {
-                    System.out.println("What is your next move? HIT, STAND, DOUBLE OR SURRENDER");
-                    this.blackjackGame.setGameState(GameState.WAITFORPLAYERACTION);
-                } else {
-                    System.out.println("BUST");
-                    break;
-                }
-            }
-            else if (this.blackjackGame.getGameState() == GameState.PLAYERSTAND) {
-                break;
-            }
-        }
-//        TODO need to find out how enum switch case works
-//        while (true) {
-//            GameState gs = this.blackjackGame.getGameState();
-//            switch (gs)    {
-//                case GameState.WAITFORPLAYERACTION:
-//                    Thread.sleep(1000);
-//
-//                case GameState.PLAYERHIT:
-//                    if (this.blackjackGame.getPlayerScore() < 22) {
-//                        System.out.println("What is your next move? HIT, STAND, DOUBLE OR SURRENDER");
-//                        this.blackjackGame.setGameState(GameState.WAITFORPLAYERACTION);
-//                    } else {
-//                        System.out.println("BUST");
-//                        break;
-//            }
-//        }
-
-        this.blackjackGame.checkWinOrLose();
-        System.out.println("♣ ♦ ♥ ♠ Dealer score: " + this.blackjackGame.getDealerScore() + " Player score: " + this.blackjackGame.getPlayerScore() + " ♠ ♥ ♦ ♣");
     }
 
-    public void placeBet(String username, Long betAmount) {
-        chips.remove(betAmount);
-        this.chipsRepository.save(chips);
+    public void playerHit(String username) {
+        if (this.blackjackGame.getPlayerScore() < 21) {
+            this.blackjackGame.getDealer().drawCardForPlayer();
+            this.blackjackGame.updateCardsScores();
 
-        //make new bet and put it in blackJackData
-        blackjackGame.setBet(new Bet(betAmount));
-        System.out.println(username + " placed a bet of " + betAmount + " chips");
+            if (this.blackjackGame.getPlayerScore() < 22) {
+
+                System.out.println("Your cards: " + this.blackjackGame.getPlayer().getHand().getCards());
+
+                this.blackjackGame.updateCardsScores();
+
+                this.blackjackGame.setGameState(GameState.PLAYERHIT);
+            } else {
+                this.blackjackGame.setGameState(GameState.PLAYERLOSE);
+                playerStand(username);
+            }
+        } else {
+            System.out.println("Hit not possible");
+        }
     }
 
-    //TODO
-    public void playerHit() {
-        System.out.println("HIT (WIP)");
-
-        this.blackjackGame.getDealer().drawCardForPlayer();
-
-        System.out.println("Your cards: " + this.blackjackGame.getPlayer().getHand().getCards());
-
-        this.blackjackGame.updateCardsScores();
-
-        this.blackjackGame.setGameState(GameState.PLAYERHIT);
-    }
-
-    //TODO
-    public void playerStand() {
-        System.out.println("STAND (WIP)");
-
+    public void playerStand(String username) {
         this.blackjackGame.revealHiddenCard();
         this.blackjackGame.getDealer().playerStands();
 
@@ -132,16 +81,49 @@ public class BlackJackService {
 
         this.blackjackGame.updateCardsScores();
 
-        this.blackjackGame.setGameState(GameState.PLAYERSTAND);
+        if (this.blackjackGame.getDealerScore() >= this.blackjackGame.getPlayerScore() &&
+        this.blackjackGame.getDealerScore() < 22 || this.blackjackGame.getPlayerScore() > 21) {
+            this.blackjackGame.setGameState(GameState.PLAYERLOSE);
+        } else {
+            if (this.blackjackGame.getGameState() != GameState.PLAYERDOUBLE &&
+                    this.blackjackGame.getGameState() != GameState.PLAYERBLACKJACK) {
+                this.blackjackGame.setGameState(GameState.PLAYERWIN);
+            }
+        }
+
+        this.chipsService.payOut(username,
+                this.blackjackGame.getGameState(),
+                this.blackjackGame.getBet().getAmount());
+        System.out.println("♣ ♦ ♥ ♠ Dealer score: " + this.blackjackGame.getDealerScore() + " Player score: " + this.blackjackGame.getPlayerScore() + " ♠ ♥ ♦ ♣");
     }
 
-    //TODO
-    public void playerSurrender() {
-        System.out.println("SURRENDER (WIP)");
+    public void playerSurrender(String username) {
+        this.blackjackGame.setGameState(GameState.PLAYERSURRENDER);
+        this.chipsService.payOut(username,
+                this.blackjackGame.getGameState(),
+                this.blackjackGame.getBet().getAmount());
+        System.out.println("♣ ♦ ♥ ♠ Dealer score: " + this.blackjackGame.getDealerScore() + " Player score: " + this.blackjackGame.getPlayerScore() + " ♠ ♥ ♦ ♣");
     }
 
-    //TODO
-    public void playerDouble() {
-        System.out.println("DOUBLE (WIP)");
+    public void playerDouble(String username) {
+        chips.remove(this.blackjackGame.getBet().getAmount());
+        this.chipsRepository.save(chips);
+
+        chips = this.chipsRepository.findByUser(user)
+                .orElse(new Chips(user, 0L));
+
+        this.blackjackGame.getBet().setAmount(this.blackjackGame.getBet().getAmount() * 2);
+
+        this.blackjackGame.getDealer().drawCardForPlayer();
+        System.out.println("Your cards: " + this.blackjackGame.getPlayer().getHand().getCards());
+        this.blackjackGame.revealHiddenCard();
+        this.blackjackGame.getDealer().playerStands();
+        System.out.println("Dealer has drawn card(s)");
+        System.out.println("Dealers cards: " + this.blackjackGame.getDealer().getHand().getCards());
+
+        this.blackjackGame.updateCardsScores();
+
+        this.blackjackGame.setGameState(GameState.PLAYERDOUBLE);
+        playerStand(username);
     }
 }

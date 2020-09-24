@@ -1,5 +1,6 @@
 package nl.hu.bep2.casino.chips.application;
 
+import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 import nl.hu.bep2.casino.chips.data.Chips;
 import nl.hu.bep2.casino.chips.data.SpringChipsRepository;
 import nl.hu.bep2.casino.security.data.User;
@@ -33,15 +34,53 @@ public class ChipsService {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        // This will just deposit any amount of chips,
-        // in a real world scenario, you would send the
-        // user through a payment gateway before adding the amount
-        // after confirmation
         Chips chips = this.chipsRepository.findByUser(user)
             .orElse(new Chips(user, 0L));
         chips.deposit(amount);
 
         System.out.println(amount + " chips have been deposited for " + username);
+        this.chipsRepository.save(chips);
+    }
+
+    public void withdrawChips(String username, Long amount) {
+        User user = this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Chips chips = this.chipsRepository.findByUser(user)
+                .orElse(new Chips(user, 0L));
+        chips.remove(amount);
+
+        System.out.println(amount + " chips have been withdrawed for " + username);
+        this.chipsRepository.save(chips);
+    }
+
+    public void payOut(String username, GameState gameState, Long bet) {
+        User user = this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Chips chips = this.chipsRepository.findByUser(user)
+                .orElse(new Chips(user, 0L));
+
+        //PAYOUTS
+        if (gameState == GameState.PLAYERBLACKJACK) {
+            System.out.println("WIN BY BLACKJACK, you've won " + bet*5 + " chips!");
+            chips.deposit(bet * 5);
+        }
+        else if (gameState == GameState.PLAYERWIN) {
+            System.out.println("WIN, you've won " + bet*2 + " chips!");
+            chips.deposit(bet * 2);
+        }
+        else if (gameState == GameState.PLAYERDOUBLE) {
+            System.out.println("WIN BY DOUBLING, you've won " + bet*2 + " chips!");
+            chips.deposit(bet * 2);
+        }
+        else if (gameState == GameState.PLAYERSURRENDER) {
+            System.out.println("SURRENDER, returned " + bet/2 + " chips!");
+            chips.deposit(bet / 2);
+        }
+        else if (gameState == GameState.PLAYERLOSE) {
+            System.out.println("LOSE, you've lost " + bet + " chips!");
+        }
         this.chipsRepository.save(chips);
     }
 }
