@@ -18,8 +18,9 @@ public class BlackJack {
     private Long playerScore;
     private Long dealerScore;
     private GameState gameState;
-    private Long chipsWon;
     private Long bet;
+    private String username;
+    private boolean isGameDone = false;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -27,32 +28,47 @@ public class BlackJack {
     private Date creationDate;
 
     public BlackJack(){}
-    public BlackJack(Long id, Long playerscore, Long dealerscore, GameState gameState, Long chipsWon, Long bet) {
-        this.id = id;
+    public BlackJack(Long playerscore, Long dealerscore, GameState gameState, Long bet, String username) {
         this.playerScore = playerscore;
         this.dealerScore = dealerscore;
         this.gameState = gameState;
-        this.chipsWon = chipsWon;
         this.bet = bet;
+        this.username = username;
+    }
+
+    public void update(Long playerscore, Long dealerscore, GameState gameState, boolean isGameDone) {
+        this.playerScore = playerscore;
+        this.dealerScore = dealerscore;
+        this.gameState = gameState;
+        this.isGameDone = isGameDone;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getPlayerscore() {
-        return playerScore;
-    }
-
-    public Long getDealerscore() {
-        return dealerScore;
-    }
-
     public GameState getGameState() {
         return gameState;
     }
 
-    public Long getChipsWon() {
-        return chipsWon;
+    public Long getPlayerScore() {
+        return playerScore;
     }
+
+    public Long getDealerScore() {
+        return dealerScore;
+    }
+
+    public Long getBet() {
+        return bet;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
 }

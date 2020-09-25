@@ -1,5 +1,6 @@
 package nl.hu.bep2.casino.blackjack.application;
 
+import nl.hu.bep2.casino.blackjack.data.BlackJack;
 import nl.hu.bep2.casino.blackjack.data.BlackJackRepository;
 import nl.hu.bep2.casino.blackjack.domain.Bet;
 import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
@@ -25,6 +26,7 @@ public class BlackJackService {
 
     private User user;
     private Chips chips;
+    private BlackJack blackJack;
 
     public BlackJackService(SpringUserRepository userRepository, SpringChipsRepository chipsRepository, BlackJackRepository blackJackRepository, BlackjackGame blackjackGame, ChipsService chipsService) {
         this.userRepository = userRepository;
@@ -35,6 +37,10 @@ public class BlackJackService {
     }
 
     public void startGame(String username, Long bet) {
+        //create new blackjack in repository
+        blackJack = new BlackJack((long) this.blackjackGame.getPlayerScore(),(long) this.blackjackGame.getDealerScore(), this.blackjackGame.getGameState(), bet,  username);
+        this.blackJackRepository.save(blackJack);
+
         chipsService.withdrawChips(username, bet);
         blackjackGame.setBet(new Bet(bet));
         System.out.println(username + " placed a bet of " + bet + " chips");
@@ -67,6 +73,8 @@ public class BlackJackService {
                 this.blackjackGame.setGameState(GameState.PLAYERLOSE);
                 playerStand(username);
             }
+            blackJack.update((long) this.blackjackGame.getPlayerScore(),(long) this.blackjackGame.getDealerScore(), this.blackjackGame.getGameState(), false);
+            this.blackJackRepository.save(blackJack);
         } else {
             System.out.println("Hit not possible");
         }
@@ -75,6 +83,7 @@ public class BlackJackService {
     public void playerStand(String username) {
         this.blackjackGame.revealHiddenCard();
         this.blackjackGame.getDealer().playerStands();
+        this.blackjackGame.setGameState(GameState.PLAYERSTAND);
 
         System.out.println("Dealer has drawn card(s)");
         System.out.println("Dealers cards: " + this.blackjackGame.getDealer().getHand().getCards());
@@ -82,7 +91,7 @@ public class BlackJackService {
         this.blackjackGame.updateCardsScores();
 
         if (this.blackjackGame.getDealerScore() >= this.blackjackGame.getPlayerScore() &&
-        this.blackjackGame.getDealerScore() < 22 || this.blackjackGame.getPlayerScore() > 21) {
+                this.blackjackGame.getDealerScore() < 22 || this.blackjackGame.getPlayerScore() > 21) {
             this.blackjackGame.setGameState(GameState.PLAYERLOSE);
         } else {
             if (this.blackjackGame.getGameState() != GameState.PLAYERDOUBLE &&
@@ -90,6 +99,8 @@ public class BlackJackService {
                 this.blackjackGame.setGameState(GameState.PLAYERWIN);
             }
         }
+        blackJack.update((long) this.blackjackGame.getPlayerScore(),(long) this.blackjackGame.getDealerScore(), this.blackjackGame.getGameState(), true);
+        this.blackJackRepository.save(blackJack);
 
         this.chipsService.payOut(username,
                 this.blackjackGame.getGameState(),
@@ -103,6 +114,8 @@ public class BlackJackService {
                 this.blackjackGame.getGameState(),
                 this.blackjackGame.getBet().getAmount());
         System.out.println("♣ ♦ ♥ ♠ Dealer score: " + this.blackjackGame.getDealerScore() + " Player score: " + this.blackjackGame.getPlayerScore() + " ♠ ♥ ♦ ♣");
+        blackJack.update((long) this.blackjackGame.getPlayerScore(),(long) this.blackjackGame.getDealerScore(), this.blackjackGame.getGameState(), true);
+        this.blackJackRepository.save(blackJack);
     }
 
     public void playerDouble(String username) {
@@ -124,6 +137,8 @@ public class BlackJackService {
         this.blackjackGame.updateCardsScores();
 
         this.blackjackGame.setGameState(GameState.PLAYERDOUBLE);
+        blackJack.update((long) this.blackjackGame.getPlayerScore(),(long) this.blackjackGame.getDealerScore(), this.blackjackGame.getGameState(), false);
+        this.blackJackRepository.save(blackJack);
         playerStand(username);
     }
 }

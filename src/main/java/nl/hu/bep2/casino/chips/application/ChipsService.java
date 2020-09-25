@@ -1,5 +1,6 @@
 package nl.hu.bep2.casino.chips.application;
 
+import nl.hu.bep2.casino.blackjack.application.BlackJackService;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 import nl.hu.bep2.casino.chips.data.Chips;
 import nl.hu.bep2.casino.chips.data.SpringChipsRepository;
