@@ -2,6 +2,7 @@ package nl.hu.bep2.casino.blackjack.data;
 
 import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
 import nl.hu.bep2.casino.security.data.User;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,9 +18,12 @@ public class Blackjack {
     @Lob
     private BlackjackGame blackjackGame;
 
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column
     private Date creationDate;
+
+    @Column
     private Boolean gameDone;
 
     @OneToOne

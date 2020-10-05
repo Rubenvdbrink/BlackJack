@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface BlackjackRepository extends JpaRepository<Blackjack, Long> {
     Optional<Blackjack> findById(Long Id);
 
+    //get's the last game of specified user
     Optional<Blackjack> findTopByUserAndGameDoneOrderByIdDesc(User user, Boolean gameDone);
 }

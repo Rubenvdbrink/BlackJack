@@ -27,7 +27,7 @@ public class Dealer implements Serializable, Person {
     }
 
     public void playerStands() {
-        while(totalScoreOfCards() < 17) {
+        while (totalScoreOfCards() < 17) {
             drawCardForDealer();
         }
     }
@@ -36,11 +36,13 @@ public class Dealer implements Serializable, Person {
         this.hand.getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck());
     }
 
-    public void drawCardForPlayer() { this.player.getHand().getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck()); }
+    public void drawCardForPlayer() {
+        this.player.getHand().getCards().add(this.deck.getFirstCardAndRemoveOutOfDeck());
+    }
 
     public int totalScoreOfCards() {
         int score = 0;
-        if(!this.hand.getCards().isEmpty()) {
+        if (!this.hand.getCards().isEmpty()) {
             for (Card card : this.hand.getCards()) {
                 score += card.getValue();
             }
@@ -48,12 +50,12 @@ public class Dealer implements Serializable, Person {
         return score;
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
-    }
-
     public Deck getDeck() {
         return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
 
     public Hand getHand() {

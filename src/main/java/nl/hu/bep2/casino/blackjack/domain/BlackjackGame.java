@@ -1,6 +1,5 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
-
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 
 import java.io.Serializable;
@@ -49,7 +48,7 @@ public class BlackjackGame implements Serializable {
     }
 
     /**
-     *  \/ ACTIONS \/
+     * \/ ACTIONS \/
      */
 
     public boolean playerHit() {
@@ -98,7 +97,7 @@ public class BlackjackGame implements Serializable {
                 > this.playerScore
                 && this.dealerScore < 22
                 || this.playerScore > 21) {
-           this.gameState = GameState.PLAYERLOSE;
+            this.gameState = GameState.PLAYERLOSE;
         } else {
             if (this.gameState
                     != GameState.PLAYERDOUBLE
@@ -139,15 +138,14 @@ public class BlackjackGame implements Serializable {
     }
 
     /**
-     *  \/ CHECKS \/
+     * \/ CHECKS \/
      */
 
     private boolean checkBlackJack() {
         if (playerScore == 21 && dealerScore == 21) {
             gameState = GameState.PLAYERPUSH;
             return true;
-        }
-        else if (playerScore == 21) {
+        } else if (playerScore == 21) {
             gameState = GameState.PLAYERBLACKJACK;
             return true;
         }
@@ -165,7 +163,7 @@ public class BlackjackGame implements Serializable {
     }
 
     /**
-     *  \/ OTHER \/
+     * \/ OTHER \/
      */
 
     private void checkDoubleAce(Person person) {

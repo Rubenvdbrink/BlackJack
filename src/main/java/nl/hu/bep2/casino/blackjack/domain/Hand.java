@@ -7,7 +7,8 @@ import java.util.List;
 public class Hand implements Serializable {
     private List<Card> cards = new ArrayList<>();
 
-    public Hand() {}
+    public Hand() {
+    }
 
     public List<Card> getCards() {
         return cards;

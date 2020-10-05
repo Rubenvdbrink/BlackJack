@@ -5,12 +5,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * This is a data model.
- *
+ * <p>
  * It is similar to a domain model, but is
  * intended for storage purposes. It does not
  * contain a lot of business logic.
@@ -38,7 +37,9 @@ public class Chips {
     @Column
     private Date lastUpdate;
 
-    public Chips() {}
+    public Chips() {
+    }
+
     public Chips(User user, Long amount) {
         this.user = user;
         this.amount = amount;

@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-        throws AuthenticationException, IOException, ServletException {
+            throws AuthenticationException, IOException {
         Login login = new ObjectMapper()
                 .readValue(request.getInputStream(), Login.class);
 

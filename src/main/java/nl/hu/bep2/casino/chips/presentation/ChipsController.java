@@ -21,9 +21,6 @@ public class ChipsController {
 
     @GetMapping("/balance")
     public Balance showBalance(Authentication authentication) {
-        // The Authentication is automatically injected by Spring
-        // It is based on the Bearer token in the Authorisation header
-        // of the incoming request
         UserProfile profile = (UserProfile) authentication.getPrincipal();
 
         Chips chips = this.service

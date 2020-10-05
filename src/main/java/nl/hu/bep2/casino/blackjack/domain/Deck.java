@@ -23,8 +23,8 @@ public class Deck implements Serializable {
     }
 
     public Card getFirstCardAndRemoveOutOfDeck() {
-        Card firstCard = this.cards.get(0); //gets first card out of deck
-        this.cards.remove(0);  //and removes it from the deck
+        Card firstCard = this.cards.get(0);
+        this.cards.remove(0);
         return firstCard;
     }
 

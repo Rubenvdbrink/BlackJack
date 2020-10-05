@@ -2,8 +2,8 @@ package nl.hu.bep2.casino.security.application;
 
 import nl.hu.bep2.casino.chips.data.Chips;
 import nl.hu.bep2.casino.chips.data.SpringChipsRepository;
-import nl.hu.bep2.casino.security.data.User;
 import nl.hu.bep2.casino.security.data.SpringUserRepository;
+import nl.hu.bep2.casino.security.data.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,19 +13,18 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 /**
- *  Implements UserDetailsService in order to make it usable
- *  as login/registration service for Spring.
- *  (see AuthenticationFilter)
+ * Implements UserDetailsService in order to make it usable
+ * as login/registration service for Spring.
+ * (see AuthenticationFilter)
  */
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
-    @Value("${chips.start-amount}")
-    private Long chipsStartAmount;
-
     private final SpringUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SpringChipsRepository chipsRepository;
+    @Value("${chips.start-amount}")
+    private Long chipsStartAmount;
 
 
     public UserService(SpringUserRepository repository, PasswordEncoder passwordEncoder, SpringChipsRepository chipsRepository) {

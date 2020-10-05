@@ -20,9 +20,13 @@ public class Card implements Serializable {
         return rank;
     }
 
-    public Suit getSuit() { return suit; }
+    public Suit getSuit() {
+        return suit;
+    }
 
-    public int getValue() { return value; }
+    public int getValue() {
+        return value;
+    }
 
     public void setValue(int value) {
         this.value = value;

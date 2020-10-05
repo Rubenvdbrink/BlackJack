@@ -4,7 +4,6 @@ import nl.hu.bep2.casino.blackjack.data.Blackjack;
 import nl.hu.bep2.casino.blackjack.data.BlackjackRepository;
 import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
-import nl.hu.bep2.casino.blackjack.presentation.dto.BlackjackDTO;
 import nl.hu.bep2.casino.chips.application.ChipsService;
 import nl.hu.bep2.casino.security.data.SpringUserRepository;
 import nl.hu.bep2.casino.security.data.User;
@@ -120,6 +119,6 @@ public class BlackjackService {
 
     private User retrieveUser(String username) {
         return this.userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException( "♣ ♦ ♥ ♠ User with username: " + username + " does not exist! ♠ ♥ ♦ ♣"));
+                .orElseThrow(() -> new UsernameNotFoundException("♣ ♦ ♥ ♠ User with username: " + username + " does not exist! ♠ ♥ ♦ ♣"));
     }
 }
