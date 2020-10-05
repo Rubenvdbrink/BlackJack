@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public abstract class Game implements Serializable {
 
-    abstract void initializeGame(String username) throws InterruptedException;
+    abstract boolean initializeGame(String username, Long bet) throws InterruptedException;
 
-    abstract void checkWinOrLose();
+//    abstract void checkWinOrLose();
 
-    public final void playOneGame(String username) throws InterruptedException {
-        initializeGame(username);
+    public final void playOneGame(String username, Long bet) throws InterruptedException {
+        initializeGame(username, bet);
     }
 }

@@ -12,38 +12,4 @@ public class Utils {
                 "                                                                                                                __/ |                               \n" +
                 "                                                                                                               |___/                                ");
     }
-
-    public static void printWin() {
-        System.out.println(" __     __           _                                           \n" +
-                " \\ \\   / /          | |                                          \n" +
-                "  \\ \\_/ /__  _   _  | |__   __ ___   _____  __      _____  _ __  \n" +
-                "   \\   / _ \\| | | | | '_ \\ / _` \\ \\ / / _ \\ \\ \\ /\\ / / _ \\| '_ \\ \n" +
-                "    | | (_) | |_| | | | | | (_| |\\ V /  __/  \\ V  V / (_) | | | |\n" +
-                "    |_|\\___/ \\__,_| |_| |_|\\__,_| \\_/ \\___|   \\_/\\_/ \\___/|_| |_|\n");
-    }
-
-    public static void printLose() {
-        System.out.println(" __     __           _                       _           _   \n" +
-                " \\ \\   / /          | |                     | |         | |  \n" +
-                "  \\ \\_/ /__  _   _  | |__   __ ___   _____  | | ___  ___| |_ \n" +
-                "   \\   / _ \\| | | | | '_ \\ / _` \\ \\ / / _ \\ | |/ _ \\/ __| __|\n" +
-                "    | | (_) | |_| | | | | | (_| |\\ V /  __/ | | (_) \\__ \\ |_ \n" +
-                "    |_|\\___/ \\__,_| |_| |_|\\__,_| \\_/ \\___| |_|\\___/|___/\\__|\n");
-    }
-
-    public static void printHit() {
-        System.out.println("\n♣ ♦ ♥ ♠ HIT ♠ ♥ ♦ ♣");
-    }
-
-    public static void printStand() {
-        System.out.println("\n♣ ♦ ♥ ♠ STAND ♠ ♥ ♦ ♣");
-    }
-
-    public static void printSurrender() {
-        System.out.println("\n♣ ♦ ♥ ♠ SURRENDER ♠ ♥ ♦ ♣");
-    }
-
-    public static void printDouble() {
-        System.out.println("\n♣ ♦ ♥ ♠ DOUBLE ♠ ♥ ♦ ♣");
-    }
 }

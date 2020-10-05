@@ -63,7 +63,7 @@ public class ChipsService {
 
         //PAYOUTS
         if (gameState == GameState.PLAYERBLACKJACK) {
-            System.out.println("WIN BY BLACKJACK, you've won " + bet * 5 + " chips!");
+            System.out.println("WON BY BLACKJACK, you've won " + bet * 5 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 5);
         }
         else if (gameState == GameState.PLAYERWIN) {
@@ -71,15 +71,15 @@ public class ChipsService {
             chips.deposit(bet * 2);
         }
         else if (gameState == GameState.PLAYERDOUBLE) {
-            System.out.println("WIN BY DOUBLING, you've won " + bet * 2 + " chips!");
+            System.out.println("WON BY DOUBLING, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 2);
         }
         else if (gameState == GameState.PLAYERSURRENDER) {
-            System.out.println("SURRENDER, returned " + bet / 2 + " chips!");
+            System.out.println("SURRENDER, returned " + bet / 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet / 2);
         }
         else if (gameState == GameState.PLAYERLOSE) {
-            System.out.println("LOSE, you've lost " + bet + " chips!");
+            System.out.println("LOSE, you've lost " + bet + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         this.chipsRepository.save(chips);
     }
