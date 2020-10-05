@@ -3,10 +3,11 @@ package nl.hu.bep2.casino.blackjack.domain;
 import nl.hu.bep2.casino.blackjack.domain.enums.Rank;
 import nl.hu.bep2.casino.blackjack.domain.enums.Suit;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Deck {
+public class Deck implements Serializable {
     private List<Card> cards = new ArrayList<>();
 
     public Deck() {

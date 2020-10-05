@@ -2,14 +2,14 @@ package nl.hu.bep2.casino.blackjack.domain;
 
 import org.springframework.stereotype.Component;
 
-@Component
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
     private Hand hand;
     private Dealer dealer;
-    private String username;
 
-    public Player() {
-        this.hand = new Hand();
+    public Player(Hand hand) {
+        this.hand = hand;
     }
 
     public void surrender() {}
@@ -22,14 +22,6 @@ public class Player {
             }
         }
         return score;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public Hand getHand() {

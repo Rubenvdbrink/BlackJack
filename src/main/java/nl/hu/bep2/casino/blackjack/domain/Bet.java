@@ -2,8 +2,9 @@ package nl.hu.bep2.casino.blackjack.domain;
 
 import org.springframework.stereotype.Component;
 
-@Component
-public class Bet {
+import java.io.Serializable;
+
+public class Bet implements Serializable {
     private Long amount;
 
     public Bet() {}

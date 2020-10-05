@@ -1,6 +1,8 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
-public abstract class Game {
+import java.io.Serializable;
+
+public abstract class Game implements Serializable {
 
     abstract void initializeGame(String username) throws InterruptedException;
 

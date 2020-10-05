@@ -1,6 +1,5 @@
 package nl.hu.bep2.casino.chips.application;
 
-import nl.hu.bep2.casino.blackjack.application.BlackJackService;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 import nl.hu.bep2.casino.chips.data.Chips;
 import nl.hu.bep2.casino.chips.data.SpringChipsRepository;
@@ -64,19 +63,19 @@ public class ChipsService {
 
         //PAYOUTS
         if (gameState == GameState.PLAYERBLACKJACK) {
-            System.out.println("WIN BY BLACKJACK, you've won " + bet*5 + " chips!");
+            System.out.println("WIN BY BLACKJACK, you've won " + bet * 5 + " chips!");
             chips.deposit(bet * 5);
         }
         else if (gameState == GameState.PLAYERWIN) {
-            System.out.println("WIN, you've won " + bet*2 + " chips!");
+            System.out.println("WIN, you've won " + bet * 2 + " chips!");
             chips.deposit(bet * 2);
         }
         else if (gameState == GameState.PLAYERDOUBLE) {
-            System.out.println("WIN BY DOUBLING, you've won " + bet*2 + " chips!");
+            System.out.println("WIN BY DOUBLING, you've won " + bet * 2 + " chips!");
             chips.deposit(bet * 2);
         }
         else if (gameState == GameState.PLAYERSURRENDER) {
-            System.out.println("SURRENDER, returned " + bet/2 + " chips!");
+            System.out.println("SURRENDER, returned " + bet / 2 + " chips!");
             chips.deposit(bet / 2);
         }
         else if (gameState == GameState.PLAYERLOSE) {

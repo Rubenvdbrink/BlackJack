@@ -2,11 +2,11 @@ package nl.hu.bep2.casino.blackjack.domain;
 
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class Hand {
+public class Hand implements Serializable {
     private List<Card> cards = new ArrayList<>();
 
     public Hand() {}

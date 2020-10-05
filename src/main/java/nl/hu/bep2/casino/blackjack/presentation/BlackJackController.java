@@ -1,48 +1,53 @@
 package nl.hu.bep2.casino.blackjack.presentation;
 
-import nl.hu.bep2.casino.blackjack.application.BlackJackService;
-import nl.hu.bep2.casino.blackjack.presentation.dto.Bet;
+import nl.hu.bep2.casino.blackjack.application.BlackjackService;
+import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
+import nl.hu.bep2.casino.blackjack.presentation.dto.BetDTO;
+import nl.hu.bep2.casino.blackjack.presentation.dto.BlackjackDTO;
 import nl.hu.bep2.casino.security.data.UserProfile;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/blackjack")
 public class BlackJackController {
-    private final BlackJackService blackJackService;
+    private final BlackjackService blackJackService;
 
-    public BlackJackController(BlackJackService blackJackService) { this.blackJackService = blackJackService; }
+    public BlackJackController(BlackjackService blackJackService) { this.blackJackService = blackJackService; }
 
     @PostMapping("/startgame")
-    public void startGame(Authentication authentication, @RequestBody Bet bet) {
+    public BlackjackDTO startGame(Authentication authentication, @RequestBody BetDTO bet) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.startGame(profile.getUsername(), bet.betAmount);
+        return blackJackService.startGame(profile.getUsername(), bet.betAmount);
     }
 
     @PostMapping("/hit")
-    public void playerHit(Authentication authentication) {
+    public BlackjackDTO playerHit(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.playerHit(profile.getUsername());
+        return blackJackService.playerHit(profile.getUsername());
     }
 
     @PostMapping("/stand")
-    public void playerStand(Authentication authentication) {
+    public BlackjackDTO playerStand(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.playerStand(profile.getUsername());
+        return blackJackService.playerStand(profile.getUsername());
     }
 
     @PostMapping("/surrender")
-    public void playerSurrender(Authentication authentication) {
+    public BlackjackDTO playerSurrender(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.playerSurrender(profile.getUsername());
+        return blackJackService.playerSurrender(profile.getUsername());
     }
 
     @PostMapping("/double")
-    public void playerDouble(Authentication authentication) {
+    public BlackjackDTO playerDouble(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
-        this.blackJackService.playerDouble(profile.getUsername());
+        return blackJackService.playerDouble(profile.getUsername());
     }
 }

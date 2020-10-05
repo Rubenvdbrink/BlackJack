@@ -6,11 +6,11 @@ import nl.hu.bep2.casino.blackjack.domain.enums.Rank;
 import nl.hu.bep2.casino.blackjack.domain.enums.Suit;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class BlackjackGame extends Game {
+public class BlackjackGame extends Game implements Serializable {
     private Player player;
     private Dealer dealer;
     private int playerScore = 0;
@@ -25,15 +25,15 @@ public class BlackjackGame extends Game {
 
     @Override
     public void initializeGame(String username) {
-        player.setUsername(username);
-        System.out.println("Welcome, " + player.getUsername() + " to blackjack!");
+
+        System.out.println("Welcome, to blackjack!");
         System.out.println("♣ ♦ ♥ ♠ " + username + " has placed a bet of " + bet.getAmount() + " chips ♠ ♥ ♦ ♣");
 
         System.out.println("♣ ♦ ♥ ♠ Deck is getting shuffled ♠ ♥ ♦ ♣");
         dealer.shuffleDeck();
 
         startingRound();
-//
+
 //        fakeBlackJackForPlayer();
         if (checkBlackJack()) {
             return;
