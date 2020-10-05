@@ -1,7 +1,5 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

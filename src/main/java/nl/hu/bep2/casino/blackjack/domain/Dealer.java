@@ -1,11 +1,9 @@
 package nl.hu.bep2.casino.blackjack.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.Collections;
 
-public class Dealer implements Serializable {
+public class Dealer implements Serializable, Person {
     private Deck deck;
     private Hand hand;
     private Player player;
@@ -44,7 +42,7 @@ public class Dealer implements Serializable {
         int score = 0;
         if(!this.hand.getCards().isEmpty()) {
             for (Card card : this.hand.getCards()) {
-                score += card.getRank().rank();
+                score += card.getValue();
             }
         }
         return score;

@@ -2,14 +2,12 @@ package nl.hu.bep2.casino.blackjack.domain;
 
 
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
-import nl.hu.bep2.casino.blackjack.domain.enums.Rank;
-import nl.hu.bep2.casino.blackjack.domain.enums.Suit;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlackjackGame extends Game implements Serializable {
+public class BlackjackGame implements Serializable {
     private Player player;
     private Dealer dealer;
     private int playerScore = 0;
@@ -22,7 +20,6 @@ public class BlackjackGame extends Game implements Serializable {
         this.dealer = dealer;
     }
 
-    @Override
     public boolean initializeGame(String username, Long bet) {
         Utils.printWelcome();
         this.bet = new Bet(bet);
@@ -35,43 +32,70 @@ public class BlackjackGame extends Game implements Serializable {
 
         startingRound();
 
-//        fakeBlackJackForPlayer();
+//        manipulateCards(new Card(Rank.ACE, Suit.DIAMONDS), new Card(Rank.ACE, Suit.DIAMONDS), player);
+//        manipulateCards(new Card(Rank.ACE, Suit.DIAMONDS), new Card(Rank.ACE, Suit.DIAMONDS), dealer);
+
+        checkDoubleAce(player);
+        checkDoubleAce(dealer);
         return checkBlackJack();
     }
 
-    //ToDo replace code from service to here
-    public void playerHit() {
+    private void startingRound() {
+        System.out.println("\n♣ ♦ ♥ ♠ Handing out cards ♠ ♥ ♦ ♣");
+        this.dealer.startGameHandOutCards();
+        System.out.println("\nYour cards: " + this.player.getHand().getCards());
+        System.out.println("Dealers cards: " + this.dealer.getHand().getCards().get(0) + " and one non visible card");
+        updateCardsScores();
+    }
+
+    /**
+     *  \/ ACTIONS \/
+     */
+
+    public boolean playerHit() {
+        updateCardsScores();
+
         if (this.playerScore < 22) {
             this.dealer.drawCardForPlayer();
             updateCardsScores();
 
+            System.out.println("Your cards: " + this.player.getHand().getCards());
+
             if (this.playerScore < 22) {
-
-                System.out.println("Your cards: " + this.player.getHand().getCards());
-
-                updateCardsScores();
-
                 this.gameState = GameState.PLAYERHIT;
             } else {
-                this.gameState = GameState.PLAYERLOSE;
+                if (!checkForAceAndChangeValue(player)) {
+                    this.gameState = GameState.PLAYERLOSE;
+                }
             }
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void playerStand() {
+    public void playerStandOrDealersTurn() {
         revealHiddenCard();
         this.dealer.playerStands();
+        updateCardsScores();
 
-        System.out.println("Dealer has drawn card(s)");
-        System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
+        while (dealerScore > 21) {
+            if (checkForAceAndChangeValue(this.dealer)) {
+                this.dealer.playerStands();
+            } else {
+                break;
+            }
+        }
+
+        revealHiddenCard();
 
         updateCardsScores();
         if (this.gameState == GameState.PLAYERSURRENDER) {
             return;
         }
-//        this.gameState = GameState.PLAYERSTAND;
+
         if (this.dealerScore
-                >= this.playerScore
+                > this.playerScore
                 && this.dealerScore < 22
                 || this.playerScore > 21) {
            this.gameState = GameState.PLAYERLOSE;
@@ -79,7 +103,9 @@ public class BlackjackGame extends Game implements Serializable {
             if (this.gameState
                     != GameState.PLAYERDOUBLE
                     && this.gameState
-                    != GameState.PLAYERBLACKJACK) {
+                    != GameState.PLAYERBLACKJACK
+                    && this.gameState
+                    != GameState.PLAYERPUSH) {
                 this.gameState = GameState.PLAYERWIN;
             }
         }
@@ -91,9 +117,10 @@ public class BlackjackGame extends Game implements Serializable {
     }
 
     public boolean playerDouble() {
-        if(this.gameState == GameState.STARTOFGAME) {
+        if (this.gameState == GameState.STARTOFGAME) {
 
             dealer.drawCardForPlayer();
+
             System.out.println("Your cards: " + player.getHand().getCards());
 
             revealHiddenCard();
@@ -111,43 +138,63 @@ public class BlackjackGame extends Game implements Serializable {
         return false;
     }
 
-    public void startingRound() {
-        System.out.println("\n♣ ♦ ♥ ♠ Handing out cards ♠ ♥ ♦ ♣");
-        this.dealer.startGameHandOutCards();
-        System.out.println("\nYour cards: " + this.player.getHand().getCards());
-        System.out.println("Dealers cards: " + this.dealer.getHand().getCards().get(0) + " and one non visible card");
-        updateCardsScores();
-    }
+    /**
+     *  \/ CHECKS \/
+     */
 
-    public void revealHiddenCard() {
-        System.out.println("\nDealer reveals hidden card");
-        System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
-    }
-
-    public boolean checkBlackJack() {
-        if (playerScore == 21 && dealerScore != 21) {
+    private boolean checkBlackJack() {
+        if (playerScore == 21 && dealerScore == 21) {
+            gameState = GameState.PLAYERPUSH;
+            return true;
+        }
+        else if (playerScore == 21) {
             gameState = GameState.PLAYERBLACKJACK;
             return true;
         }
         return false;
     }
 
+    private boolean checkForAceAndChangeValue(Person person) {
+        for (Card card : person.getHand().getCards()) {
+            if (card.getValue() == 11) {
+                card.setValue(1);
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public void updateCardsScores() {
+    /**
+     *  \/ OTHER \/
+     */
+
+    private void checkDoubleAce(Person person) {
+        if (person.totalScoreOfCards() == 22) {
+            checkForAceAndChangeValue(person);
+        }
+    }
+
+    //only needed for console output
+    private void revealHiddenCard() {
+        System.out.println("\nDealer reveals hidden card");
+        System.out.println("Dealers cards: " + this.dealer.getHand().getCards());
+    }
+
+    private void updateCardsScores() {
         playerScore = player.totalScoreOfCards();
         dealerScore = dealer.totalScoreOfCards();
     }
 
-    //TODO remove before version 1.0, this is just for testing purposes
-    public void fakeBlackJackForPlayer() {
+    //this is just for testing purposes
+    private void manipulateCards(Card card1, Card card2, Person person) {
         List<Card> list = new ArrayList<>();
-        list.add(new Card(Rank.ACE, Suit.DIAMONDS));
-        list.add(new Card(Rank.TEN, Suit.DIAMONDS));
-        this.player.getHand().setCards(list);
+        list.add(card1);
+        list.add(card2);
+        person.getHand().setCards(list);
 
         updateCardsScores();
 
-        System.out.println("fake blackjack for player! " + this.player.getHand().getCards());
+        System.out.println("manipulated cards! " + person.getHand().getCards());
     }
 
     public Player getPlayer() {
@@ -162,17 +209,7 @@ public class BlackjackGame extends Game implements Serializable {
         return bet;
     }
 
-    //ToDo remove before version 1.0
-    public void setBet(Bet bet) { this.bet = bet; }
-    public int getPlayerScore() { return playerScore; }
-    public int getDealerScore() { return dealerScore; }
-    //
-
     public GameState getGameState() {
         return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
     }
 }

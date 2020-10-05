@@ -54,6 +54,7 @@ public class ChipsService {
         this.chipsRepository.save(chips);
     }
 
+    //ToDo fix
     public void payOut(String username, GameState gameState, Long bet) {
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -66,8 +67,12 @@ public class ChipsService {
             System.out.println("WON BY BLACKJACK, you've won " + bet * 5 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 5);
         }
+        else if (gameState == GameState.PLAYERPUSH) {
+            System.out.println("DRAW, your bet of " + bet + " chips has been returned, your new total is: " + chips.getAmount() + " chips!");
+            chips.deposit(bet);
+        }
         else if (gameState == GameState.PLAYERWIN) {
-            System.out.println("WIN, you've won " + bet * 2 + " chips!");
+            System.out.println("WIN, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 2);
         }
         else if (gameState == GameState.PLAYERDOUBLE) {

@@ -2,6 +2,7 @@ package nl.hu.bep2.casino.blackjack.application;
 
 import nl.hu.bep2.casino.blackjack.data.Blackjack;
 import nl.hu.bep2.casino.blackjack.data.BlackjackRepository;
+import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 import nl.hu.bep2.casino.blackjack.presentation.dto.BlackjackDTO;
 import nl.hu.bep2.casino.chips.application.ChipsService;
@@ -28,18 +29,14 @@ public class BlackjackService {
         this.blackJackGameFactory = blackJackGameFactory;
     }
 
-    public BlackjackDTO startOrContinueGame(String username, Long bet) {
+    public BlackjackGame startOrContinueGame(String username, Long bet) {
         var user = retrieveUser(username);
 
         //Check if a game for this user already exists
         Optional<Blackjack> lastBlackJack = this.blackJackRepository.findTopByUserAndGameDoneOrderByIdDesc(user, false);
         if (lastBlackJack.isPresent()) {
             //Returns the dto of the last blackjack game that the player started
-            return new BlackjackDTO(
-                    lastBlackJack.get().getBlackjackGame().getPlayer().getHand(),
-                    lastBlackJack.get().getBlackjackGame().getDealer().getHand(),
-                    lastBlackJack.get().getBlackjackGame().getGameState());
-//            throw new RuntimeException("Game already exists");
+            return lastBlackJack.get().getBlackjackGame();
         }
 
         //Make new blackjackgame
@@ -48,69 +45,52 @@ public class BlackjackService {
         //Withdraws chips
         this.chipsService.withdrawChips(username, bet);
 
-        //starts game and places bet
+        //Starts game and places bet
         if (blackjackGame.initializeGame(username, bet)) {
             this.blackJackRepository.save(new Blackjack(blackjackGame, false, user));
             return playerStandOrDealersTurn(username);
         }
 
+        //Saves new blackjackgame in database
         this.blackJackRepository.save(new Blackjack(blackjackGame, false, user));
 
-        return new BlackjackDTO(blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand(),
-                blackjackGame.getGameState());
+        return blackjackGame;
     }
 
-    //ToDo cleanup code, replace to blackjackgame
-    public BlackjackDTO playerHit(String username) {
+    public BlackjackGame playerHit(String username) {
         var user = retrieveUser(username);
         var blackJack = retrieveBlackJackGame(user);
         var blackjackGame = blackJack.getBlackjackGame();
 
-        if (blackjackGame.getPlayerScore() < 22) {
-            blackjackGame.getDealer().drawCardForPlayer();
-            blackjackGame.updateCardsScores();
-
-            if (blackjackGame.getPlayerScore() < 22) {
-
-                System.out.println("Your cards: " + blackjackGame.getPlayer().getHand().getCards());
-
-                blackjackGame.updateCardsScores();
-
-                blackjackGame.setGameState(GameState.PLAYERHIT);
-            } else {
-                blackjackGame.setGameState(GameState.PLAYERLOSE);
+        if (blackjackGame.playerHit()) {
+            if (blackjackGame.getGameState() == GameState.PLAYERLOSE) {
                 return playerStandOrDealersTurn(username);
-
             }
-
-            this.blackJackRepository.save(blackJack);
         } else {
             throw new RuntimeException("♣ ♦ ♥ ♠ Can't hit at this moment! ♠ ♥ ♦ ♣");
         }
-        return new BlackjackDTO(blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand(),
-                blackjackGame.getGameState());
+
+        this.blackJackRepository.save(blackJack);
+
+        return blackjackGame;
     }
 
-    public BlackjackDTO playerStandOrDealersTurn(String username) {
+    public BlackjackGame playerStandOrDealersTurn(String username) {
         var user = retrieveUser(username);
         var blackJack = retrieveBlackJackGame(user);
         var blackjackGame = blackJack.getBlackjackGame();
 
-        blackjackGame.playerStand();
+        blackjackGame.playerStandOrDealersTurn();
 
         this.chipsService.payOut(username, blackjackGame.getGameState(), blackjackGame.getBet().getAmount());
 
         blackJack.setGameDone(true);
         this.blackJackRepository.save(blackJack);
 
-        return new BlackjackDTO(blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand(),
-                blackjackGame.getGameState());
+        return blackjackGame;
     }
 
-    public BlackjackDTO playerSurrender(String username) {
+    public BlackjackGame playerSurrender(String username) {
         var user = retrieveUser(username);
         var blackJack = retrieveBlackJackGame(user);
         var blackjackGame = blackJack.getBlackjackGame();
@@ -119,7 +99,7 @@ public class BlackjackService {
         return playerStandOrDealersTurn(username);
     }
 
-    public BlackjackDTO playerDouble(String username) {
+    public BlackjackGame playerDouble(String username) {
         var user = retrieveUser(username);
         var blackJack = retrieveBlackJackGame(user);
         var blackjackGame = blackJack.getBlackjackGame();
