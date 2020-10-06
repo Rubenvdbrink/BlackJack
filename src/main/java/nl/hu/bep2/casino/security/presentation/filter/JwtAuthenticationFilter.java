@@ -5,7 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import nl.hu.bep2.casino.security.data.User;
-import nl.hu.bep2.casino.security.presentation.dto.Login;
+import nl.hu.bep2.casino.security.presentation.dto.LoginDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -54,8 +53,8 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException {
-        Login login = new ObjectMapper()
-                .readValue(request.getInputStream(), Login.class);
+        LoginDTO login = new ObjectMapper()
+                .readValue(request.getInputStream(), LoginDTO.class);
 
         return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login.username, login.password)

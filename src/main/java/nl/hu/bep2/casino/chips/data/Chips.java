@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * This is a data model.
- * <p>
+ *
  * It is similar to a domain model, but is
  * intended for storage purposes. It does not
  * contain a lot of business logic.

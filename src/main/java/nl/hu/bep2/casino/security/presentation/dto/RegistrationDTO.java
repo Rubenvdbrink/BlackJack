@@ -3,7 +3,7 @@ package nl.hu.bep2.casino.security.presentation.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public class Registration {
+public class RegistrationDTO {
     @NotBlank
     public String username;
 

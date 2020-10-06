@@ -1,7 +1,7 @@
 package nl.hu.bep2.casino.security.presentation.controller;
 
 import nl.hu.bep2.casino.security.application.UserService;
-import nl.hu.bep2.casino.security.presentation.dto.Registration;
+import nl.hu.bep2.casino.security.presentation.dto.RegistrationDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public void register(@Validated @RequestBody Registration registration) {
+    public void register(@Validated @RequestBody RegistrationDTO registration) {
         this.userService.register(
                 registration.username,
                 registration.password,
