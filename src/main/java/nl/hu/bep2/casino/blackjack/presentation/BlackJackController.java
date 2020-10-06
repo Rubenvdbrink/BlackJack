@@ -22,51 +22,38 @@ public class BlackJackController {
     public BlackjackDTO startGame(Authentication authentication, @RequestBody BetDTO bet) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         var blackjackGame = blackJackService.startOrContinueGame(profile.getUsername(), bet.betAmount);
-
-        return new BlackjackDTO(
-                blackjackGame.getGameState(),
-                blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand());
+        return createBlackjackDTO(blackjackGame);
     }
 
     @PostMapping("/hit")
     public BlackjackDTO playerHit(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         var blackjackGame = blackJackService.playerHit(profile.getUsername());
-
-        return new BlackjackDTO(
-                blackjackGame.getGameState(),
-                blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand());
+        return createBlackjackDTO(blackjackGame);
     }
 
     @PostMapping("/stand")
     public BlackjackDTO playerStand(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         var blackjackGame = blackJackService.playerStandOrDealersTurn(profile.getUsername());
-
-        return new BlackjackDTO(
-                blackjackGame.getGameState(),
-                blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand());
+        return createBlackjackDTO(blackjackGame);
     }
 
     @PostMapping("/surrender")
     public BlackjackDTO playerSurrender(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         var blackjackGame = blackJackService.playerSurrender(profile.getUsername());
-
-        return new BlackjackDTO(
-                blackjackGame.getGameState(),
-                blackjackGame.getPlayer().getHand(),
-                blackjackGame.getDealer().getHand());
+        return createBlackjackDTO(blackjackGame);
     }
 
     @PostMapping("/double")
     public BlackjackDTO playerDouble(Authentication authentication) {
         UserProfile profile = (UserProfile) authentication.getPrincipal();
         var blackjackGame = blackJackService.playerDouble(profile.getUsername());
+        return createBlackjackDTO(blackjackGame);
+    }
 
+    private BlackjackDTO createBlackjackDTO(BlackjackGame blackjackGame) {
         return new BlackjackDTO(
                 blackjackGame.getGameState(),
                 blackjackGame.getPlayer().getHand(),
