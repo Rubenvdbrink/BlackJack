@@ -19,9 +19,9 @@ public class BlackjackGame implements Serializable {
         this.dealer = dealer;
     }
 
-    public boolean initializeGame(String username, Long bet) {
+    public boolean initializeGame(String username) {
         Utils.printWelcome();
-        this.bet = new Bet(bet);
+//        this.bet = new Bet(bet);
 
         System.out.println("Welcome, to blackjack!");
         System.out.println("♣ ♦ ♥ ♠ " + username + " has placed a bet of " + this.bet.getAmount() + " chips ♠ ♥ ♦ ♣");
@@ -209,5 +209,29 @@ public class BlackjackGame implements Serializable {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    public int getPlayerScore() {
+        return playerScore;
+    }
+
+    public void setPlayerScore(int playerScore) {
+        this.playerScore = playerScore;
+    }
+
+    public int getDealerScore() {
+        return dealerScore;
+    }
+
+    public void setDealerScore(int dealerScore) {
+        this.dealerScore = dealerScore;
+    }
+
+    public void setBet(Bet bet) {
+        this.bet = bet;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 }

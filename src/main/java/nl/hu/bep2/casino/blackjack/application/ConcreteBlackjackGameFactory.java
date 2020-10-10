@@ -7,13 +7,16 @@ import org.springframework.stereotype.Component;
 public class ConcreteBlackjackGameFactory implements BlackjackGameFactory {
 
     @Override
-    public BlackjackGame create() {
+    public BlackjackGame create(Long bet) {
         var handPlayer = new Hand();
         var player = new Player(handPlayer);
 
         var handDealer = new Hand();
         var dealer = new Dealer(new Deck(), handDealer, player);
 
-        return new BlackjackGame(player, dealer);
+        BlackjackGame blackjackGame = new BlackjackGame(player, dealer);
+        blackjackGame.setBet(new Bet(bet));
+
+        return blackjackGame;
     }
 }

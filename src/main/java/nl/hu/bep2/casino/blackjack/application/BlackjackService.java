@@ -3,6 +3,8 @@ package nl.hu.bep2.casino.blackjack.application;
 import nl.hu.bep2.casino.blackjack.data.Blackjack;
 import nl.hu.bep2.casino.blackjack.data.BlackjackRepository;
 import nl.hu.bep2.casino.blackjack.domain.BlackjackGame;
+import nl.hu.bep2.casino.blackjack.domain.HitStrategy;
+import nl.hu.bep2.casino.blackjack.domain.InitializeGameStrategy;
 import nl.hu.bep2.casino.blackjack.domain.enums.GameState;
 import nl.hu.bep2.casino.chips.application.ChipsService;
 import nl.hu.bep2.casino.security.data.SpringUserRepository;
@@ -39,16 +41,21 @@ public class BlackjackService {
         }
 
         //Make new blackjackgame
-        var blackjackGame = blackJackGameFactory.create();
+        var blackjackGame = blackJackGameFactory.create(bet);
 
         //Withdraws chips
         this.chipsService.withdrawChips(username, bet);
 
         //Starts game and places bet
-        if (blackjackGame.initializeGame(username, bet)) {
+        if (new InitializeGameStrategy().doAction(blackjackGame)) {
             this.blackJackRepository.save(new Blackjack(blackjackGame, false, user));
             return playerStandOrDealersTurn(username);
         }
+//
+//        if (blackjackGame.initializeGame(username)) {
+//            this.blackJackRepository.save(new Blackjack(blackjackGame, false, user));
+//            return playerStandOrDealersTurn(username);
+//        }
 
         //Saves new blackjackgame in database
         this.blackJackRepository.save(new Blackjack(blackjackGame, false, user));
@@ -61,7 +68,7 @@ public class BlackjackService {
         var blackJack = retrieveBlackJackGame(user);
         var blackjackGame = blackJack.getBlackjackGame();
 
-        if (blackjackGame.playerHit()) {
+        if (new HitStrategy().doAction(blackjackGame)) {
             if (blackjackGame.getGameState() == GameState.PLAYERLOSE) {
                 return playerStandOrDealersTurn(username);
             }
