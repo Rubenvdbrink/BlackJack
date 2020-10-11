@@ -17,10 +17,6 @@ public class BalanceDTO {
         return username;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
     public Long getChips() {
         return chips;
     }

@@ -12,11 +12,10 @@ public class ConcreteBlackjackGameFactory implements BlackjackGameFactory {
         var player = new Player(handPlayer);
 
         var handDealer = new Hand();
-        var dealer = new Dealer(new Deck(), handDealer, player);
+        var dealer = new Dealer(new Deck(), handDealer);
 
-        BlackjackGame blackjackGame = new BlackjackGame(player, dealer);
-        blackjackGame.setBet(new Bet(bet));
+        var gameBet = new Bet(bet);
 
-        return blackjackGame;
+        return new BlackjackGame(player, dealer, gameBet);
     }
 }

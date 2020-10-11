@@ -9,16 +9,16 @@ public class Player implements Serializable, Person {
         this.hand = hand;
     }
 
+    @Override
     public int totalScoreOfCards() {
         int score = 0;
-        if (!this.hand.getCards().isEmpty()) {
-            for (Card card : this.hand.getCards()) {
-                score += card.getValue();
-            }
+        for (Card card : this.hand.getCards()) {
+            score += card.getValue();
         }
         return score;
     }
 
+    @Override
     public Hand getHand() {
         return hand;
     }

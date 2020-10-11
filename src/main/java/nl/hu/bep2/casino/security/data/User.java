@@ -42,10 +42,6 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getUsername() {
         return username;
     }

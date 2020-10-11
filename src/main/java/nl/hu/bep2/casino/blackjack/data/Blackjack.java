@@ -36,25 +36,12 @@ public class Blackjack {
         this.user = user;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public BlackjackGame getBlackjackGame() {
         return blackjackGame;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public boolean isGameDone() {
-        return gameDone;
     }
 
     public void setGameDone(Boolean gameDone) {
         this.gameDone = gameDone;
     }
-
 
 }

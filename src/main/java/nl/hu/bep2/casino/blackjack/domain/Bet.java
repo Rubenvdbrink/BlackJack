@@ -5,9 +5,6 @@ import java.io.Serializable;
 public class Bet implements Serializable {
     private Long amount;
 
-    public Bet() {
-    }
-
     public Bet(Long amount) {
         this.amount = amount;
     }

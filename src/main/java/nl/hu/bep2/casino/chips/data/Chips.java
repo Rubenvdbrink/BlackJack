@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 import java.util.Date;
 
 /**
@@ -25,6 +26,7 @@ public class Chips {
     private User user;
 
     @Column
+    @Positive
     private Long amount;
 
     @CreationTimestamp
@@ -60,10 +62,6 @@ public class Chips {
 
     public Long getAmount() {
         return amount;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
     }
 
     public Date getLastUpdate() {

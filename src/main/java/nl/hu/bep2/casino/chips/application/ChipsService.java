@@ -56,34 +56,35 @@ public class ChipsService {
 
     //ToDo fix
     public void payOut(String username, GameState gameState, Long bet) {
-        User user = this.userRepository.findByUsername(username)
+        var user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        Chips chips = this.chipsRepository.findByUser(user)
+        var chips = this.chipsRepository.findByUser(user)
                 .orElse(new Chips(user, 0L));
 
         //PAYOUTS
         if (gameState == GameState.PLAYERBLACKJACK) {
-            System.out.println("WON BY BLACKJACK, you've won " + bet * 5 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 5);
+            System.out.println("WON BY BLACKJACK, you've won " + bet * 5 + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         else if (gameState == GameState.PLAYERPUSH) {
-            System.out.println("DRAW, your bet of " + bet + " chips has been returned, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet);
+            System.out.println("DRAW, your bet of " + bet + " chips has been returned, your new total is: " + chips.getAmount() + " chips!");
         }
-        else if (gameState == GameState.PLAYERWIN) {
-            System.out.println("WIN, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
+        else if (gameState == GameState.PLAYERNORMALWIN) {
             chips.deposit(bet * 2);
+            System.out.println("WIN, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         else if (gameState == GameState.PLAYERDOUBLE) {
-            System.out.println("WON BY DOUBLING, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet * 2);
+            System.out.println("WON BY DOUBLING, you've won " + bet * 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         else if (gameState == GameState.PLAYERSURRENDER) {
-            System.out.println("SURRENDER, returned " + bet / 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
             chips.deposit(bet / 2);
+            System.out.println("SURRENDER, returned " + bet / 2 + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         else if (gameState == GameState.PLAYERLOSE) {
+            //deposit nothing because of lose
             System.out.println("LOSE, you've lost " + bet + " chips!, your new total is: " + chips.getAmount() + " chips!");
         }
         this.chipsRepository.save(chips);

@@ -14,15 +14,4 @@ public class BlackjackDTO {
         this.dealerHand = dealerHand;
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public Hand getPlayerHand() {
-        return playerHand;
-    }
-
-    public Hand getDealerHand() {
-        return dealerHand;
-    }
 }

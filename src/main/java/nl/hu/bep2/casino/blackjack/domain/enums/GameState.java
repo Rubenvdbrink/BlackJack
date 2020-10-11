@@ -7,6 +7,6 @@ public enum GameState {
     PLAYERDOUBLE,
     PLAYERBLACKJACK,
     PLAYERPUSH,
-    PLAYERWIN,
+    PLAYERNORMALWIN,
     PLAYERLOSE
 }
