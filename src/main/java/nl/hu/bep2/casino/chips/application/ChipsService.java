@@ -53,8 +53,7 @@ public class ChipsService {
         System.out.println(amount + " chips have been withdrawed for " + username);
         this.chipsRepository.save(chips);
     }
-
-    //ToDo fix
+    
     public void payOut(String username, GameState gameState, Long bet) {
         var user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
